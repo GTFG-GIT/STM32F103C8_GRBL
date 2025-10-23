@@ -242,7 +242,7 @@ uint8_t system_execute_line(char *line)
                     { return (STATUS_SETTING_DISABLED); }
                     if (system_check_safety_door_ajar())
                     { return (STATUS_CHECK_DOOR); } // Block if safety door is ajar.
-                    sys.state = STATE_HOMING; // Set system state variable
+//AZ                    sys.state = STATE_HOMING; // Set system state variable
                     if (line[2] == 0)
                     {
                         mc_homing_cycle(HOMING_CYCLE_ALL);
@@ -280,13 +280,13 @@ uint8_t system_execute_line(char *line)
 #endif
                     } else
                     { return (STATUS_INVALID_STATEMENT); }
-                    if (!sys.abort)
-                    {  // Execute startup scripts after successful homing.
-                        sys.state = STATE_IDLE; // Set to IDLE when complete.
-                        st_go_idle(); // Set steppers to the settings idle state before returning.
-                        if (line[2] == 0)
-                        { system_execute_startup(line); }
-                    }
+//                    if (!sys.abort) //AZ
+//                    {  // Execute startup scripts after successful homing.
+//                        sys.state = STATE_IDLE; // Set to IDLE when complete.
+//                        st_go_idle(); // Set steppers to the settings idle state before returning.
+//                        if (line[2] == 0)
+//                        { system_execute_startup(line); }
+//                    }
                     break;
                 case 'S' : // Puts Grbl to sleep [IDLE/ALARM]
                     if ((line[2] != 'L') || (line[3] != 'P') || (line[4] != 0))

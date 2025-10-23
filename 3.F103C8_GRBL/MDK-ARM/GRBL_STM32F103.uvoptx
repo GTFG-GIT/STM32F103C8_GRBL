@@ -157,18 +157,82 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>442</LineNumber>
+          <LineNumber>248</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247300</Address>
+          <Address>134258606</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\App\grbl\protocol.c</Filename>
+          <Filename>..\App\grbl\system.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\GRBL_STM32F103\../App/grbl/protocol.c\442</Expression>
+          <Expression>\\GRBL_STM32F103\../App/grbl/system.c\248</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>301</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134240882</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\App\grbl\limits.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\\../App/grbl/limits.c\301</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>313</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134240912</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\App\grbl\limits.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\GRBL_STM32F103\../App/grbl/limits.c\313</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>351</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134241080</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\App\grbl\limits.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\GRBL_STM32F103\../App/grbl/limits.c\351</Expression>
+        </Bp>
+        <Bp>
+          <Number>4</Number>
+          <Type>0</Type>
+          <LineNumber>353</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134241088</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\App\grbl\limits.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\GRBL_STM32F103\../App/grbl/limits.c\353</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -191,6 +255,11 @@
           <count>3</count>
           <WinNumber>1</WinNumber>
           <ItemText>segment_buffer_tail,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>sys</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
