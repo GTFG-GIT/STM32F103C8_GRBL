@@ -253,6 +253,7 @@ void limits_go_home(uint8_t cycle_mask) {
 
 // Non-blocking homing state machine processor
 void limits_homing_process() {
+  uint8_t pull_off_state=0;
     // Skip if homing not active
     if (!limits_homing_in_progress()) return;
 
@@ -281,6 +282,8 @@ void limits_homing_process() {
                         homing_data.target_pos[homing_data.current_axis_idx] = 
                             homing_data.is_approaching ? homing_data.max_travel : -homing_data.max_travel;
                     }
+                    // Apply axislock to the step port pins active in this cycle.
+                    homing_data.axis_lock |= step_pin_mask[homing_data.current_axis_idx];
                 }
             }
 
@@ -289,7 +292,7 @@ void limits_homing_process() {
                 homing_data.homing_rate *= sqrtf((float)homing_data.active_axis_count);
             }
             homing_data.plan_data.feed_rate = homing_data.homing_rate;
-
+            sys.homing_axis_lock = homing_data.axis_lock;
             // Plan and start homing motion
             if (plan_buffer_line(homing_data.target_pos, &homing_data.plan_data) == PLAN_OK) {
                 sys.step_control = STEP_CONTROL_EXECUTE_SYS_MOTION;
@@ -322,10 +325,40 @@ void limits_homing_process() {
                     }
                 }
             }
-
+            
             // Check if current motion is complete
             st_prep_buffer();  // Refresh step segment buffer
-            if ((homing_data.axis_lock & STEP_MASK) == 0) {
+            
+            if (homing_data.is_approaching == 0)
+            {
+              // Handle homing errors (safety door, reset, etc.)
+              if (sys_rt_exec_state & (EXEC_SAFETY_DOOR | EXEC_RESET | EXEC_CYCLE_STOP)) {
+                  uint8_t rt_exec = sys_rt_exec_state;
+                  // Set appropriate alarm code
+                  if (rt_exec & EXEC_RESET) {
+                      system_set_exec_alarm(EXEC_ALARM_HOMING_FAIL_RESET);
+                  } else if (rt_exec & EXEC_SAFETY_DOOR) {
+                      system_set_exec_alarm(EXEC_ALARM_HOMING_FAIL_DOOR);
+                  } else if (!homing_data.is_approaching && (limits_get_state() & homing_data.cycle_mask)) {
+                      system_set_exec_alarm(EXEC_ALARM_HOMING_FAIL_PULLOFF);
+                  } else if (homing_data.is_approaching && (rt_exec & EXEC_CYCLE_STOP)) {
+                      system_set_exec_alarm(EXEC_ALARM_HOMING_FAIL_APPROACH);
+                  }
+
+                  // Trigger system reset on error
+                  if (sys_rt_exec_alarm) {
+                      mc_reset();
+                      protocol_execute_realtime();
+                      homing_data.state = HOMING_STATE_ERROR;
+                      sys.state = STATE_ALARM;
+                  } else {
+                      system_clear_exec_state_flag(EXEC_CYCLE_STOP);
+                      pull_off_state = 1;//pull off finished
+                  }
+              }
+            }
+
+            if ((homing_data.axis_lock & STEP_MASK) == 0 || pull_off_state==1) {
                 // Motion complete: stop stepper and reset
                 homing_data.motion_in_progress = false;
                 st_reset();
@@ -354,31 +387,7 @@ void limits_homing_process() {
                 }
             }
 
-            // Handle homing errors (safety door, reset, etc.)
-            if (sys_rt_exec_state & (EXEC_SAFETY_DOOR | EXEC_RESET | EXEC_CYCLE_STOP)) {
-                uint8_t rt_exec = sys_rt_exec_state;
-                // Set appropriate alarm code
-                if (rt_exec & EXEC_RESET) {
-                    system_set_exec_alarm(EXEC_ALARM_HOMING_FAIL_RESET);
-                } else if (rt_exec & EXEC_SAFETY_DOOR) {
-                    system_set_exec_alarm(EXEC_ALARM_HOMING_FAIL_DOOR);
-                } else if (!homing_data.is_approaching && (limits_get_state() & homing_data.cycle_mask)) {
-                    system_set_exec_alarm(EXEC_ALARM_HOMING_FAIL_PULLOFF);
-                } else if (homing_data.is_approaching && (rt_exec & EXEC_CYCLE_STOP)) {
-                    system_set_exec_alarm(EXEC_ALARM_HOMING_FAIL_APPROACH);
-                }
-
-                // Trigger system reset on error
-                if (sys_rt_exec_alarm) {
-                    mc_reset();
-                    protocol_execute_realtime();
-                    homing_data.state = HOMING_STATE_ERROR;
-                    sys.state = STATE_ALARM;
-                } else {
-                    system_clear_exec_state_flag(EXEC_CYCLE_STOP);
-                    homing_data.state = HOMING_STATE_COMPLETE;
-                }
-            }
+            
             break;
         }
 
